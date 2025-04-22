@@ -1,0 +1,23 @@
+body {
+    font-family: Arial, sans-serif;
+    padding: 10px;
+    width: 250px;
+  }
+  
+  label {
+    display: block;
+    margin-top: 10px;
+  }
+  
+  input, button {
+    width: 100%;
+    margin-top: 5px;
+    padding: 5px;
+    box-sizing: border-box;
+  }
+  
+  #results {
+    margin-top: 15px;
+    font-size: 14px;
+  }
+  
