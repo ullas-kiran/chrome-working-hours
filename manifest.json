@@ -1,16 +1,10 @@
 {
-    "manifest_version": 3,
-    "name": "Work Hours Calculator",
-    "version": "1.0",
-    "description": "Calculate gross and effective hours from login time.",
-    "action": {
-      "default_popup": "popup.html",
-      "default_icon": {
-        "16": "icon.png",
-        "48": "icon.png",
-        "128": "icon.png"
-      }
-    },
-    "permissions": []
-  }
-  
+  "manifest_version": 3,
+  "name": "Work Hours Calculator",
+  "version": "1.0",
+  "description": "Calculate effective and gross hours with remaining time and punchout time.",
+  "action": {
+    "default_popup": "popup.html"
+  },
+  "permissions": []
+}
