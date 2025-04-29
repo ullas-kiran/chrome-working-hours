@@ -4,73 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Work Hours Calculator</title>
-  <style>
-    body {
-      font-family: Arial, sans-serif;
-      width: 400px;
-      padding: 10px;
-      background-color: #f4f4f4;
-    }
-    h1 {
-      font-size: 18px;
-      text-align: center;
-      color: #333;
-    }
-    .input-group {
-      margin: 10px 0;
-    }
-    label {
-      display: block;
-      margin-bottom: 5px;
-      font-weight: bold;
-      color: #555;
-    }
-    select {
-      padding: 8px;
-      margin-bottom: 10px;
-      border: 1px solid #ccc;
-      border-radius: 4px;
-      box-sizing: border-box;
-    }
-    .time-input {
-      display: flex;
-      gap: 10px;
-    }
-    .time-input select {
-      width: 80px;
-    }
-    .time-input select#loginAmPm {
-      width: 60px;
-    }
-    button {
-      width: 100%;
-      padding: 10px;
-      background-color: #28a745;
-      color: white;
-      border: none;
-      border-radius: 4px;
-      cursor: pointer;
-      font-size: 16px;
-    }
-    button:hover {
-      background-color: #218838;
-    }
-    #result {
-      margin-top: 20px;
-      padding: 10px;
-      background-color: #fff;
-      border: 1px solid #ddd;
-      border-radius: 4px;
-    }
-    #result p {
-      margin: 5px 0;
-      color: #333;
-    }
-    #result p span {
-      font-weight: bold;
-      color: #007bff;
-    }
-  </style>
+  <link rel="stylesheet" href="style.css">
 </head>
 <body>
   <h1>Work Hours Calculator</h1>
@@ -91,7 +25,7 @@
       </select>
       <select id="effectiveMinutes" required>
         <option value="" disabled selected>Minute</option>
-        <!-- Generated dynamically in JavaScript for 0 to 59 -->
+        <!-- Generated dynamically in JavaScript -->
       </select>
     </div>
   </div>
@@ -115,7 +49,7 @@
       </select>
       <select id="loginMinutes" required>
         <option value="" disabled selected>Minute</option>
-        <!-- Generated dynamically in JavaScript for 0 to 59 -->
+        <!-- Generated dynamically in JavaScript -->
       </select>
       <select id="loginAmPm" required>
         <option value="" disabled selected>AM/PM</option>
@@ -124,102 +58,8 @@
       </select>
     </div>
   </div>
-  <button onclick="startCalculation()">Calculate</button>
+  <button id="calculateButton">Calculate</button>
   <div id="result"></div>
-
-  <script>
-    // Populate minute dropdowns (0 to 59)
-    function populateMinutes(selectId) {
-      const select = document.getElementById(selectId);
-      for (let i = 0; i < 60; i++) {
-        const option = document.createElement('option');
-        option.value = i < 10 ? `0${i}` : i;
-        option.text = i < 10 ? `0${i}` : i;
-        select.appendChild(option);
-      }
-    }
-
-    // Initialize minute dropdowns
-    populateMinutes('effectiveMinutes');
-    populateMinutes('loginMinutes');
-
-    let intervalId = null;
-
-    function formatTime(seconds) {
-      const hrs = Math.floor(seconds / 3600);
-      const mins = Math.floor((seconds % 3600) / 60);
-      const secs = Math.floor(seconds % 60);
-      return `${hrs.toString().padStart(2, '0')}h ${mins.toString().padStart(2, '0')}m ${secs.toString().padStart(2, '0')}s`;
-    }
-
-    function startCalculation() {
-      // Clear any existing interval
-      if (intervalId) {
-        clearInterval(intervalId);
-      }
-
-      const effectiveHours = parseInt(document.getElementById('effectiveHours').value);
-      const effectiveMinutes = parseInt(document.getElementById('effectiveMinutes').value);
-      const loginHours = parseInt(document.getElementById('loginHours').value);
-      const loginMinutes = parseInt(document.getElementById('loginMinutes').value);
-      const loginAmPm = document.getElementById('loginAmPm').value;
-
-      if (isNaN(effectiveHours) || isNaN(effectiveMinutes) || isNaN(loginHours) || !loginMinutes || !loginAmPm) {
-        alert('Please fill in all fields.');
-        return;
-      }
-
-      // Convert effective time to seconds
-      const effectiveTotalSeconds = effectiveHours * 3600 + effectiveMinutes * 60;
-
-      // Convert 12-hour login time to 24-hour
-      let loginHours24 = loginHours;
-      if (loginAmPm === 'PM' && loginHours !== 12) {
-        loginHours24 += 12;
-      } else if (loginAmPm === 'AM' && loginHours === 12) {
-        loginHours24 = 0;
-      }
-
-      // Set login time on current date (29/04/2025)
-      const loginDate = new Date(2025, 3, 29); // Month is 0-based (3 = April)
-      loginDate.setHours(loginHours24, loginMinutes, 0, 0);
-
-      // Calculate Punchout Time (login + 16 hours 22 minutes)
-      const punchoutDate = new Date(loginDate.getTime() + (16 * 60 * 60 + 22 * 60) * 1000);
-      const punchoutHours = punchoutDate.getHours();
-      const punchoutMinutes = punchoutDate.getMinutes();
-      const punchoutAmPm = punchoutHours >= 12 ? 'PM' : 'AM';
-      const punchoutHours12 = punchoutHours % 12 || 12;
-      const punchoutTime = `29/04/2025, ${punchoutHours12}:${punchoutMinutes < 10 ? '0' + punchoutMinutes : punchoutMinutes} ${punchoutAmPm}`;
-
-      // Constants
-      const mandatoryEffectiveSeconds = 8 * 3600; // 8 hours in seconds
-
-      // Update live clock every second
-      function updateClock() {
-        const now = new Date();
-        const elapsedSeconds = Math.floor((now - loginDate) / 1000);
-        const totalEffectiveSeconds = effectiveTotalSeconds + elapsedSeconds;
-
-        // Calculate Remaining Time
-        const remainingSeconds = mandatoryEffectiveSeconds - totalEffectiveSeconds;
-        const remainingTimeText = remainingSeconds >= 0 ? formatTime(remainingSeconds) : `0h 00m 00s (exceeded by ${formatTime(Math.abs(remainingSeconds))})`;
-
-        // Display Results
-        const resultDiv = document.getElementById('result');
-        resultDiv.innerHTML = `
-          <p>Remaining Time: <span>${remainingTimeText}</span></p>
-          <p>Total Effective Hours Worked: <span>${formatTime(totalEffectiveSeconds)}</span></p>
-          <p>Punchout Time: <span>${punchoutTime}</span></p>
-        `;
-      }
-
-      // Initial update
-      updateClock();
-
-      // Start live clock
-      intervalId = setInterval(updateClock, 1000);
-    }
-  </script>
+  <script src="popup.js"></script>
 </body>
 </html>
